@@ -16,6 +16,8 @@ public class ServiceAliveMonitor {
 
     private Daemon daemon;
 
+    private SelfProtectionPolicy selfProtectionPolicy = SelfProtectionPolicy.getInstance();
+
     public ServiceAliveMonitor() {
         this.daemon = new Daemon();
         daemon.setDaemon(true);
@@ -37,15 +39,20 @@ public class ServiceAliveMonitor {
 
             while (true){
                 try {
-                    /**
-                     * 循环遍历，查看每个instance存活情况
-                     */
+                    //首先判断是否需要进入自我保护机制
+                    if (selfProtectionPolicy.shouldEnterSelfProtection()){
+                        Thread.sleep(CHECK_ALIVE_INTERVAL);
+                        continue;
+                    }
+                    //循环遍历，查看每个instance存活情况
                     for (String serviceName :registryMap.keySet()){
                         Map<String, ServiceInstance> instanceMap = registryMap.get(serviceName);
 
                         for (ServiceInstance instance:instanceMap.values()){
                             if (!instance.isAlive()){
                                 registry.remove(serviceName,instance.getServiceInstanceId());
+                                //服务下线，自我保护机制心跳次数-2
+                                selfProtectionPolicy.shutdown();
                             }
                         }
                     }

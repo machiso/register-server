@@ -42,4 +42,12 @@ public class HeartbeatMessuredRate {
     private boolean isOverOneMinute() {
         return (System.currentTimeMillis()-latestMinuteHeartbeatRate)>60*1000l;
     }
+
+    /**
+     * 获取每分钟的心跳次数
+     * @return
+     */
+    public long get() {
+        return latestMinuteHeartbeatRate;
+    }
 }

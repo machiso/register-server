@@ -9,6 +9,8 @@ import java.util.Map;
 public class RegisterServerController {
 
     private Registry registry = Registry.registry();
+    //心跳次数实例
+    private SelfProtectionPolicy selfProtectionPolicy = SelfProtectionPolicy.getInstance();
     /**
      * 服务注册
      * @param registerRequest
@@ -25,7 +27,10 @@ public class RegisterServerController {
             instance.setIp(registerRequest.getIp());
             instance.setPort(registerRequest.getPort());
 
+            //服务注册
             registry.register(instance);
+            //期望心跳次数+2
+            selfProtectionPolicy.register();
 
             response.setStatus(RegisterResponse.SUCCESS);
         }catch (Exception e){
@@ -47,6 +52,10 @@ public class RegisterServerController {
             //心跳续约
             instance.renew();
 
+            //增加心跳次数
+            HeartbeatMessuredRate heartbeatMessuredRate = HeartbeatMessuredRate.getInstance();
+            heartbeatMessuredRate.increment();
+
             response.setStatus(HeartBreakResponse.SUCCESS);
         }catch (Exception e){
             response.setStatus(HeartBreakResponse.FAIL);
@@ -66,6 +75,9 @@ public class RegisterServerController {
      * register-client下线
      */
     public void shutdown(String serviceName,String instanceId){
+        //注册表摘除实例
         registry.remove(serviceName,instanceId);
+        //每分钟心跳次数减2
+        selfProtectionPolicy.shutdown();
     }
 }
