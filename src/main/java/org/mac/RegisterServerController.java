@@ -1,7 +1,10 @@
 package org.mac;
 
+import java.util.Map;
+
 /**
  * 模拟register-server的controller接口
+ * 提供对外接口，register-client调用
  */
 public class RegisterServerController {
 
@@ -50,5 +53,19 @@ public class RegisterServerController {
             e.printStackTrace();
         }
         return response;
+    }
+
+    /**
+     * client拉取服务注册表
+     */
+    public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry(){
+        return registry.getRegistry();
+    }
+
+    /**
+     * register-client下线
+     */
+    public void shutdown(String serviceName,String instanceId){
+        registry.remove(serviceName,instanceId);
     }
 }

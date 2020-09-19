@@ -66,7 +66,9 @@ public class ServiceInstance {
      * 包括心跳信息，续约信息等
      */
     private class Lease {
-        private Long latestHeartbeatTime = System.currentTimeMillis();
+        //最近一次心跳时间
+        //volatile修饰，可以让服务每次更新心跳时间之后，立马让监控心跳的组件读取最新的心跳时间
+        private volatile Long latestHeartbeatTime = System.currentTimeMillis();
 
         public Long getLatestHeartbeatTime() {
             return latestHeartbeatTime;
