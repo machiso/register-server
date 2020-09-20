@@ -1,5 +1,6 @@
 package org.mac;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,7 +54,7 @@ public class RegisterServerController {
             instance.renew();
 
             //增加心跳次数
-            HeartbeatMessuredRate heartbeatMessuredRate = HeartbeatMessuredRate.getInstance();
+            HeartbeatCounter heartbeatMessuredRate = HeartbeatCounter.getInstance();
             heartbeatMessuredRate.increment();
 
             response.setStatus(HeartBreakResponse.SUCCESS);
@@ -65,11 +66,19 @@ public class RegisterServerController {
     }
 
     /**
-     * client拉取服务注册表
+     * client拉取全量注册表
      */
     public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry(){
         return registry.getRegistry();
     }
+
+    /**
+     * client拉取增量注册表
+     */
+    public List<Registry.RecentlyChangedInstance> fetchDeltaInstance(){
+        return registry.fetchDeltaInstance();
+    }
+
 
     /**
      * register-client下线

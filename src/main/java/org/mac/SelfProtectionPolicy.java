@@ -39,7 +39,7 @@ public class SelfProtectionPolicy {
     //判断是否需要进入自我保护机制
     // true 需要进入自我保护机制
     public boolean shouldEnterSelfProtection(){
-        HeartbeatMessuredRate heartbeatMessuredRate = HeartbeatMessuredRate.getInstance();
+        HeartbeatCounter heartbeatMessuredRate = HeartbeatCounter.getInstance();
         //每分钟实际的心跳次数 < 期望的心跳次数，则不用进入自我保护机制
         if (heartbeatMessuredRate.get()<expectedHeartbeatThreshold){
             System.out.println("【自我保护机制开启】最近一分钟心跳次数=" + heartbeatMessuredRate.get() + ", 期望心跳次数=" + this.expectedHeartbeatThreshold);
